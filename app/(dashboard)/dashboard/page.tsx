@@ -58,7 +58,7 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {classrooms.map((cls) => (
+          {classrooms.map((cls: any) => (
             <Link
               key={cls.id}
               href={`/classroom/${cls.id}`}
