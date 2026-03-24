@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "next";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
@@ -84,7 +84,7 @@ export default function JoinClassroomPage() {
             </button>
           </div>
         </form>
-        
+
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>The class code is typically 8 characters.</p>
           <p>Don't have a code? Ask your teacher!</p>

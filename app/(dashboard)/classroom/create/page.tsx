@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "next";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Plus, X } from "lucide-react";
 
@@ -139,7 +139,7 @@ export default function CreateClassroomPage() {
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
-              
+
               {subjects.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {subjects.map((subject) => (
