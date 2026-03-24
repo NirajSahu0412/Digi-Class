@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  password  String?
+  image     String?
+  createdAt DateTime @default(now())
+
+  createdClassrooms Classroom[]       @relation("CreatedBy")
+  memberships       ClassroomMember[]
+  assignments       Assignment[]      @relation("CreatedBy")
+  submissions       Submission[]
+  videoSessions     VideoSession[]    @relation("Host")
+  storageUsages     StorageUsage[]
+  attendances       Attendance[]
+}
+
+model Classroom {
+  id           String   @id @default(uuid())
+  name         String
+  code         String   @unique
+  academicYear String
+  maxStudents  Int
+  createdBy    String
+  createdAt    DateTime @default(now())
+
+  creator       User              @relation("CreatedBy", fields: [createdBy], references: [id])
+  members       ClassroomMember[]
+  subjects      Subject[]
+  assignments   Assignment[]
+  notes         Notes[]
+  videoSessions VideoSession[]
+  storageUsages StorageUsage[]
+}
+
+enum Role {
+  TEACHER
+  STUDENT
+}
+
+model ClassroomMember {
+  id          String   @id @default(uuid())
+  role        Role
+  joinedAt    DateTime @default(now())
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  @@unique([userId, classroomId])
+}
+
+model Subject {
+  id          String   @id @default(uuid())
+  name        String
+  
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  assignments Assignment[]
+  notes       Notes[]
+}
+
+model Assignment {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  deadline    DateTime?
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  subjectId   String?
+  subject     Subject?  @relation(fields: [subjectId], references: [id])
+
+  createdBy   String
+  creator     User      @relation("CreatedBy", fields: [createdBy], references: [id])
+
+  submissions Submission[]
+}
+
+enum SubmissionStatus {
+  PENDING
+  SUBMITTED
+  EVALUATED
+}
+
+model Submission {
+  id           String           @id @default(uuid())
+  fileUrl      String?
+  marks        Float?
+  feedback     String?
+  status       SubmissionStatus @default(PENDING)
+  submittedAt  DateTime         @default(now())
+
+  assignmentId String
+  assignment   Assignment       @relation(fields: [assignmentId], references: [id])
+
+  studentId    String
+  student      User             @relation(fields: [studentId], references: [id])
+}
+
+model Notes {
+  id          String   @id @default(uuid())
+  fileUrl     String
+  uploadedBy  String // Could be relation, leaving as String per prompt
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  subjectId   String?
+  subject     Subject?  @relation(fields: [subjectId], references: [id])
+}
+
+model VideoSession {
+  id           String   @id @default(uuid())
+  recordingUrl String?
+  createdAt    DateTime @default(now())
+
+  classroomId  String
+  classroom    Classroom @relation(fields: [classroomId], references: [id])
+
+  hostId       String
+  host         User      @relation("Host", fields: [hostId], references: [id])
+}
+
+model StorageUsage {
+  id          String   @id @default(uuid())
+  fileSize    Int
+  fileType    String
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+}
+
+model Attendance {
+  id          String   @id @default(uuid())
+  joinedAt    DateTime @default(now())
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+
+  classroomId String     // As per prompt, we just store the classroom id
+  sessionId   String     // Assuming we just store the session id
+
+  @@unique([userId, sessionId])
+}
+
+model VerificationToken {
+  id      String   @id @default(uuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
