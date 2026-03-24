@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { sendActivationEmail } from "@/lib/mail";
+import crypto from "crypto";
 
 export async function POST(
   request: Request
@@ -23,11 +25,23 @@ export async function POST(
       data: {
         email,
         name,
-        password: hashedPassword
+        password: hashedPassword,
+        isActivated: false
       }
     });
 
-    return NextResponse.json(user);
+    const token = crypto.randomUUID();
+    await prisma.verificationToken.create({
+      data: {
+        email,
+        token,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
+      }
+    });
+
+    await sendActivationEmail(email, token);
+
+    return NextResponse.json({ message: "Account created! Please check your email for the activation link." });
   } catch (error: any) {
     console.log(error, 'REGISTRATION_ERROR');
     return new NextResponse("Internal Error", { status: 500 });

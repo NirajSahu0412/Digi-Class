@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Sparkles, UserPlus } from "lucide-react";
+import { Loader2, Sparkles, UserPlus, Mail, ArrowRight, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successDialog, setSuccessDialog] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,13 +37,49 @@ export default function RegisterPage() {
         throw new Error(await res.text() || "An error occurred");
       }
 
-      router.push("/login");
+      setSuccessDialog(true);
     } catch (err: any) {
       setError(err?.message || "An error occurred");
     } finally {
       setLoading(false);
     }
   };
+
+  if (successDialog) {
+    return (
+      <div className="min-h-screen bg-[#050511] flex items-center justify-center p-6 relative overflow-hidden">
+        {/* Dynamic Background Elements */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-indigo-600/10 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-purple-600/10 blur-[100px]" />
+        </div>
+
+        <div className="w-full max-w-[420px] relative z-10">
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden text-center">
+            {/* Subtle inner gradient */}
+            <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Mail className="w-8 h-8 text-indigo-400" />
+            </div>
+
+            <h1 className="text-2xl font-bold text-white mb-4">Check your email</h1>
+            <p className="text-gray-400 text-sm mb-8 leading-relaxed">
+              We've sent an activation link to your email address. Please check your inbox and click the link to activate your account.
+            </p>
+
+            <button
+              onClick={() => router.push("/login")}
+              className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white font-medium py-3 rounded-xl transition-colors border border-white/5"
+            >
+              Go to login
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#050511] flex items-center justify-center p-6 relative overflow-hidden">
@@ -107,13 +145,22 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
-              <input
-                name="password"
-                type="password"
-                required
-                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all pr-10"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <button

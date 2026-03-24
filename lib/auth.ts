@@ -40,6 +40,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        if (!user.isActivated) {
+          throw new Error("AccountNotActivated");
+        }
+
         return user;
       },
     }),
@@ -57,6 +61,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email as string,
               name: user.name,
               image: user.image,
+              isActivated: true,
             },
           });
         }
