@@ -8,8 +8,16 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!dbUser) {
+      return new NextResponse("Unauthorized - User not found in DB", { status: 401 });
     }
 
     const { name, academicYear, subjects, maxStudents } = await req.json();
@@ -27,11 +35,11 @@ export async function POST(req: Request) {
         academicYear,
         maxStudents: parseInt(maxStudents, 10),
         code,
-        createdBy: session.user.id,
+        createdBy: dbUser.id,
         members: {
           create: {
             role: "TEACHER",
-            userId: session.user.id,
+            userId: dbUser.id,
           }
         },
         subjects: {
