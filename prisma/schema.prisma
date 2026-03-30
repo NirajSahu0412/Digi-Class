@@ -130,6 +130,8 @@ model Notes {
 
 model VideoSession {
   id           String   @id @default(uuid())
+  meetingLink  String?
+  isLive       Boolean  @default(true)
   recordingUrl String?
   createdAt    DateTime @default(now())
 
