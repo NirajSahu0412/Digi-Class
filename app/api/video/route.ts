@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { generateAgoraToken } from "@/lib/video";
+import { generateLiveKitToken } from "@/lib/video";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,26 +34,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Classroom not found" }, { status: 404 });
     }
 
-    const isMember = classroom.members.some(member => member.userId === user.id);
+    const isMember = classroom.members.some((member) => member.userId === user.id);
     const isOwner = classroom.createdBy === user.id;
 
     if (!isMember && !isOwner) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const isHost = isOwner || classroom.members.some(member => member.userId === user.id && member.role === "TEACHER");
+    const isHost =
+      isOwner ||
+      classroom.members.some(
+        (member) => member.userId === user.id && member.role === "TEACHER"
+      );
 
-    // Look for an existing live session
+    // Find or create a live session
     let videoSession = await prisma.videoSession.findFirst({
-      where: {
-        classroomId,
-        isLive: true,
-      },
+      where: { classroomId, isLive: true },
     });
 
     if (!videoSession) {
       if (!isHost) {
-        return NextResponse.json({ error: "No live session found and you are not a host" }, { status: 404 });
+        return NextResponse.json(
+          { error: "No live session found and you are not a host" },
+          { status: 404 }
+        );
       }
 
       videoSession = await prisma.videoSession.create({
@@ -66,20 +70,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const uid = Math.floor(Math.random() * 100000);
-    const channelName = videoSession.id;
+    // LiveKit room name = videoSession ID, participant identity = user name
+    const roomName = videoSession.id;
+    const participantName = user.name || user.email;
 
-    // Generate token allowing everyone to publish (two-way video)
-    const token = generateAgoraToken(channelName, uid, 'publisher');
-    const appId = process.env.AGORA_APP_ID;
+    const token = await generateLiveKitToken(roomName, participantName, isHost);
+    const livekitUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
     return NextResponse.json({
       videoSession,
       token,
-      uid,
-      channelName,
-      appId,
+      roomName,
+      livekitUrl,
       isHost,
+      participantName,
     });
   } catch (error: any) {
     console.error("Video Session Error:", error);

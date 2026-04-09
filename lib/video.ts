@@ -1,27 +1,30 @@
-import { RtcTokenBuilder, RtcRole } from "agora-token";
+import { AccessToken } from "livekit-server-sdk";
 
-export function generateAgoraToken(channelName: string, uid: number, role: 'publisher' | 'subscriber' = 'publisher'): string | null {
-  const appId = process.env.AGORA_APP_ID;
-  const appCertificate = process.env.AGORA_APP_CERTIFICATE;
+export async function generateLiveKitToken(
+  roomName: string,
+  participantName: string,
+  isHost: boolean
+): Promise<string> {
+  const apiKey = process.env.LIVEKIT_API_KEY;
+  const apiSecret = process.env.LIVEKIT_API_SECRET;
 
-  if (!appId || !appCertificate) {
-    console.warn("Agora APP ID or CERTIFICATE is missing. Proceeding without token.");
-    return null;
+  if (!apiKey || !apiSecret) {
+    throw new Error("LiveKit API key or secret is missing from environment variables.");
   }
 
-  const expirationTimeInSeconds = 3600;
+  const token = new AccessToken(apiKey, apiSecret, {
+    identity: participantName,
+    ttl: "1h",
+  });
 
-  const agoraRole = role === 'publisher' ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER;
+  token.addGrant({
+    roomJoin: true,
+    room: roomName,
+    canPublish: true,      // everyone can publish (two-way video)
+    canSubscribe: true,
+    canPublishData: true,  // enables chat/data channels
+    roomAdmin: isHost,     // host gets admin controls (mute others, end session)
+  });
 
-  const token = RtcTokenBuilder.buildTokenWithUid(
-    appId,
-    appCertificate,
-    channelName,
-    uid,
-    agoraRole,
-    expirationTimeInSeconds,
-    expirationTimeInSeconds
-  );
-
-  return token;
+  return token.toJwt();
 }
