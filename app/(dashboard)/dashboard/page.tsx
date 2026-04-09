@@ -9,13 +9,19 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.id) return null;
+  if (!session?.user?.email) return null;
+
+  const dbUser = await prisma.user.findUnique({
+    where: { email: session.user.email }
+  });
+
+  if (!dbUser) return null;
 
   const classrooms = await prisma.classroom.findMany({
     where: {
       OR: [
-        { createdBy: session.user.id },
-        { members: { some: { userId: session.user.id } } }
+        { createdBy: dbUser.id },
+        { members: { some: { userId: dbUser.id } } }
       ]
     },
     include: {
@@ -70,23 +76,20 @@ export default async function DashboardPage() {
                   {cls.creator.name}
                 </p>
                 <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-md">
-                  {cls.createdBy === session.user.id ? "Teacher" : "Student"}
+                  {cls.createdBy === dbUser.id ? "Teacher" : "Student"}
                 </div>
               </div>
-              
+
               <div className="p-5 flex-1 flex flex-col bg-white">
                 <div className="flex items-center gap-2 text-sm text-gray-600 mt-2 mb-4">
                   <Calendar className="w-4 h-4 text-indigo-500" />
                   <span>{cls.academicYear}</span>
                 </div>
-                
+
                 <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                   <div className="flex items-center text-sm text-gray-500 font-medium">
                     <Users className="w-4 h-4 mr-1.5 text-gray-400" />
                     {cls._count.members} / {cls.maxStudents}
-                  </div>
-                  <div className="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-1 rounded border border-gray-200">
-                    {cls.code}
                   </div>
                 </div>
               </div>

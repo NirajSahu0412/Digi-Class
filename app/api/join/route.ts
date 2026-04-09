@@ -7,8 +7,16 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!dbUser) {
+      return new NextResponse("Unauthorized - User not found in DB", { status: 401 });
     }
 
     const { code } = await req.json();
@@ -30,7 +38,7 @@ export async function POST(req: Request) {
       return new NextResponse("Classroom not found", { status: 404 });
     }
 
-    if (classroom.createdBy === session.user.id) {
+    if (classroom.createdBy === dbUser.id) {
       return new NextResponse("You are already the creator (Teacher) of this class", { status: 400 });
     }
 
@@ -41,7 +49,7 @@ export async function POST(req: Request) {
     const existingMember = await prisma.classroomMember.findUnique({
       where: {
         userId_classroomId: {
-          userId: session.user.id,
+          userId: dbUser.id,
           classroomId: classroom.id
         }
       }
@@ -54,7 +62,7 @@ export async function POST(req: Request) {
     await prisma.classroomMember.create({
       data: {
         role: "STUDENT",
-        userId: session.user.id,
+        userId: dbUser.id,
         classroomId: classroom.id
       }
     });

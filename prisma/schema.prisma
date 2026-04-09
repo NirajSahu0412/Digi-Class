@@ -25,6 +25,7 @@ model User {
   videoSessions     VideoSession[]    @relation("Host")
   storageUsages     StorageUsage[]
   attendances       Attendance[]
+  announcements     Announcement[]
 }
 
 model Classroom {
@@ -41,6 +42,7 @@ model Classroom {
   subjects      Subject[]
   assignments   Assignment[]
   notes         Notes[]
+  announcements Announcement[]
   videoSessions VideoSession[]
   storageUsages StorageUsage[]
 }
@@ -128,6 +130,8 @@ model Notes {
 
 model VideoSession {
   id           String   @id @default(uuid())
+  meetingLink  String?
+  isLive       Boolean  @default(true)
   recordingUrl String?
   createdAt    DateTime @default(now())
 
@@ -136,6 +140,18 @@ model VideoSession {
 
   hostId       String
   host         User      @relation("Host", fields: [hostId], references: [id])
+}
+
+model Announcement {
+  id          String   @id @default(uuid())
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
 }
 
 model StorageUsage {
