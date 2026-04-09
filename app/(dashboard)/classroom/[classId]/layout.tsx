@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { BookOpen, Users, ClipboardList, PenTool } from "lucide-react";
+import { BookOpen, Users, ClipboardList, PenTool, Video } from "lucide-react";
 import { ClassCodeDisplay } from "@/components/classroom/ClassCodeDisplay";
 
 export default async function ClassroomLayout({
@@ -113,6 +113,13 @@ export default async function ClassroomLayout({
               >
                 <BookOpen className="w-4 h-4" />
                 Notes
+              </Link>
+              <Link
+                href={`/classroom/${classroom.id}/video`}
+                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-indigo-600 hover:text-indigo-800 hover:border-indigo-300 flex items-center gap-2"
+              >
+                <Video className="w-4 h-4 text-indigo-600" />
+                Live Class
               </Link>
               {isTeacher && (
                 <Link
