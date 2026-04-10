@@ -12,8 +12,14 @@ export async function generateLiveKitToken(
     throw new Error("LiveKit API key or secret is missing from environment variables.");
   }
 
+  // Use a sanitized identity (no spaces/special chars) to avoid LiveKit's
+  // internal track-reference array key mismatch bug. The human-readable
+  // display name is set via the `name` field separately.
+  const sanitizedIdentity = participantName.replace(/[^a-zA-Z0-9_-]/g, "_");
+
   const token = new AccessToken(apiKey, apiSecret, {
-    identity: participantName,
+    identity: sanitizedIdentity,
+    name: participantName,
     ttl: "1h",
   });
 

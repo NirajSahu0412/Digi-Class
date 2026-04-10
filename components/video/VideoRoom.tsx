@@ -116,15 +116,16 @@ export default function VideoRoom({
       </div>
 
       {/* LiveKit Room */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 min-h-0">
         <LiveKitRoom
           serverUrl={livekitUrl}
           token={token}
           connect={true}
           video={true}
           audio={true}
+          data-lk-theme="default"
           onDisconnected={handleDisconnect}
-          style={{ height: "100%", background: "transparent" }}
+          style={{ height: "100%" }}
         >
           <VideoConference />
           <RoomAudioRenderer />
