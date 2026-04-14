@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     const participantName = user.name || user.email;
 
     const token = await generateLiveKitToken(roomName, participantName, isHost);
-    const livekitUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
+    const livekitUrl = process.env.LIVEKIT_URL;
 
     return NextResponse.json({
       videoSession,
