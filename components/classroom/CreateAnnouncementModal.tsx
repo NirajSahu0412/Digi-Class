@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, X, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { createAnnouncement } from "@/app/(dashboard)/classroom/[classId]/actions";
 
 export function CreateAnnouncementModal({ classId }: { classId: string }) {
@@ -58,14 +59,12 @@ export function CreateAnnouncementModal({ classId }: { classId: string }) {
                 >
                   Cancel
                 </button>
-                <button
+                <Button
                   type="submit"
-                  disabled={loading}
-                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none flex items-center gap-2"
+                  isLoading={loading}
                 >
-                  {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Post
-                </button>
+                </Button>
               </div>
             </form>
           </div>

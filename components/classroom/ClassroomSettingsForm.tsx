@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Edit, Loader2 } from "lucide-react";
 import { updateClassroom } from "@/app/(dashboard)/classroom/[classId]/actions";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/Button";
 
 export function ClassroomSettingsForm({ 
   classroom 
@@ -78,10 +79,14 @@ export function ClassroomSettingsForm({
         </div>
       </div>
       <div className="mt-6 flex justify-end">
-        <button disabled={loading} className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-2 disabled:opacity-50">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Edit className="w-4 h-4" />}
+        <Button 
+          type="submit"
+          isLoading={loading}
+          leftIcon={<Edit className="w-4 h-4" />}
+          className="px-5 py-2.5"
+        >
           Save Changes
-        </button>
+        </Button>
       </div>
     </form>
   );
