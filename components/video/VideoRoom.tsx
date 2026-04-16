@@ -14,6 +14,7 @@ import "@livekit/components-styles";
 import { Track } from "livekit-client";
 import { Loader2, PhoneOff, Mic, MicOff, Video, VideoOff, Maximize, Minimize, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ParticipantSidebar } from "./ParticipantSidebar";
 
 interface VideoRoomProps {
   token: string;
@@ -36,6 +37,7 @@ export default function VideoRoom({
 }: VideoRoomProps) {
   const router = useRouter();
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
 
   const toggleFullscreen = () => {
     const container = document.getElementById("video-room-container");
@@ -96,8 +98,19 @@ export default function VideoRoom({
             {isHost ? "Host" : "Student"}
           </span>
           <button
+            onClick={() => setShowParticipants(!showParticipants)}
+            className={`p-2 rounded-lg transition-all flex items-center gap-2 ${
+              showParticipants ? "bg-indigo-600 text-white" : "bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white"
+            }`}
+            title="Participants"
+          >
+            <Users className="w-4 h-4" />
+            <span className="hidden sm:inline text-sm font-medium">People</span>
+          </button>
+          <button
             onClick={toggleFullscreen}
             className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-all"
+            title="Fullscreen"
           >
             {isFullscreen ? (
               <Minimize className="w-4 h-4" />
@@ -116,7 +129,7 @@ export default function VideoRoom({
       </div>
 
       {/* LiveKit Room */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 relative">
         <LiveKitRoom
           serverUrl={livekitUrl}
           token={token}
@@ -125,10 +138,15 @@ export default function VideoRoom({
           audio={true}
           data-lk-theme="default"
           onDisconnected={handleDisconnect}
-          style={{ height: "100%" }}
+          style={{ height: "100%", display: "flex", width: "100%" }}
         >
-          <VideoConference />
-          <RoomAudioRenderer />
+          <div className="flex-1 min-w-0" style={{ height: "100%" }}>
+            <VideoConference />
+            <RoomAudioRenderer />
+          </div>
+          {showParticipants && (
+            <ParticipantSidebar onClose={() => setShowParticipants(false)} />
+          )}
         </LiveKitRoom>
       </div>
     </div>
