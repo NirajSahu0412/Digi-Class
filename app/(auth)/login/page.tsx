@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Sparkles, ArrowRight, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -172,17 +173,15 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 shadow-[0_0_20px_-5px_rgba(99,102,241,0.4)]"
+              isLoading={loading}
+              variant="gradient"
+              className="w-full mt-2"
+              rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>Sign In <ArrowRight className="w-4 h-4" /></>
-              )}
-            </button>
+              Sign In
+            </Button>
           </form>
 
           <div className="my-6 relative">
