@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import LogoutButton from "@/components/LogoutButton";
+import { MobileNav } from "@/components/MobileNav";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -43,10 +44,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
                 </Link>
               </nav>
 
-              <div className="h-8 w-px bg-gray-200"></div>
+              <div className="hidden md:flex h-8 w-px bg-gray-200"></div>
 
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-end hidden sm:flex">
+              <div className="hidden md:flex items-center gap-4">
+                <div className="flex flex-col items-end">
                   <span className="text-xs font-bold text-gray-900 truncate max-w-[120px]">
                     {session.user.name}
                   </span>
@@ -60,6 +61,13 @@ export default async function DashboardLayout({ children }: { children: ReactNod
                   )}
                 </div>
               </div>
+
+              {/* Mobile Hamburger Menu */}
+              <MobileNav 
+                userName={session.user.name || "User"} 
+                userEmail={session.user.email || ""} 
+                userImage={session.user.image} 
+              />
             </div>
           </div>
         </div>

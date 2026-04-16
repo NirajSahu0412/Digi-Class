@@ -8,14 +8,14 @@ export function ParticipantSidebar({ onClose }: { onClose?: () => void }) {
   const { localParticipant } = useLocalParticipant();
 
   return (
-    <div className="w-80 bg-gray-900 border-l border-gray-800 flex flex-col h-full shrink-0">
+    <div className="absolute inset-y-0 right-0 z-50 w-full sm:w-80 sm:relative sm:z-auto bg-gray-900 border-l border-gray-800 flex flex-col h-full shrink-0 shadow-2xl transition-all">
       <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
         <h3 className="text-white font-semibold flex items-center gap-2">
           <Users className="w-4 h-4 text-gray-400" />
           Participants ({participants.length})
         </h3>
         {onClose && (
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors text-sm"
           >
@@ -31,8 +31,8 @@ export function ParticipantSidebar({ onClose }: { onClose?: () => void }) {
           const isVideoMuted = !p.isCameraEnabled;
 
           return (
-            <div 
-              key={p.identity} 
+            <div
+              key={p.identity}
               className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-800/50 transition-colors group"
             >
               <div className="flex items-center gap-3 overflow-hidden">
@@ -46,7 +46,7 @@ export function ParticipantSidebar({ onClose }: { onClose?: () => void }) {
                   </span>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2 text-gray-500 shrink-0">
                 {isAudioMuted ? <MicOff className="w-4 h-4 text-red-400" /> : <Mic className="w-4 h-4" />}
                 {isVideoMuted ? <VideoOff className="w-4 h-4 text-red-400" /> : <Video className="w-4 h-4" />}

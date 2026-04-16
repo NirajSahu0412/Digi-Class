@@ -24,7 +24,7 @@ export function CreateAnnouncementModal({ classId }: { classId: string }) {
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-2"
+        className="w-full sm:w-auto bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition flex items-center justify-center gap-2"
       >
         <Plus className="w-4 h-4" />
         New Announcement

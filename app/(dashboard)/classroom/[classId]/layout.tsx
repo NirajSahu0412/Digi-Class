@@ -59,7 +59,7 @@ export default async function ClassroomLayout({
                 <BookOpen className="text-white w-8 h-8" />
               </div>
               <div className="text-white">
-                <h1 className="text-3xl font-bold tracking-tight">{classroom.name}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{classroom.name}</h1>
                 <div className="flex items-center gap-3 mt-1 text-indigo-100 text-sm font-medium">
                   <span>{classroom.academicYear}</span>
                   {isTeacher && (
@@ -84,8 +84,8 @@ export default async function ClassroomLayout({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full -mt-8 mb-10 flex-1">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden min-h-[500px] flex flex-col">
           {/* Navigation */}
-          <div className="border-b border-gray-200 bg-gray-50/50 px-6">
-            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <div className="border-b border-gray-200 bg-gray-50/50 px-4 sm:px-6 overflow-x-auto custom-scrollbar">
+            <nav className="-mb-px flex space-x-6 sm:space-x-8 min-w-max pb-px" aria-label="Tabs">
               <Link
                 href={`/classroom/${classroom.id}/stream`}
                 className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 flex items-center gap-2"

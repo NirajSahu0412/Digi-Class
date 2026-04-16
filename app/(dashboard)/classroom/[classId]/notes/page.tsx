@@ -32,10 +32,10 @@ export default async function ClassroomNotesPage({ params }: { params: Promise<{
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-indigo-600" />
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
             Class Notes
           </h2>
           <p className="text-gray-500 text-sm mt-1">
@@ -44,7 +44,7 @@ export default async function ClassroomNotesPage({ params }: { params: Promise<{
         </div>
 
         {isTeacher && (
-          <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition flex items-center gap-2 shadow-sm">
+          <button className="w-full sm:w-auto bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-sm shrink-0">
             <Plus className="w-4 h-4" />
             Upload Note
           </button>
