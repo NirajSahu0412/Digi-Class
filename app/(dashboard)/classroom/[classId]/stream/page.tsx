@@ -37,14 +37,16 @@ export default async function ClassroomStreamPage({ params }: { params: Promise<
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Action Bar */}
       {isTeacher ? (
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
-          <div className="flex items-center gap-3 text-gray-500">
-            <div className="bg-indigo-100 p-2 rounded-full">
-              <MessageSquare className="w-5 h-5 text-indigo-600" />
+        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
+          <div className="flex items-center gap-3 text-gray-600 sm:text-gray-500">
+            <div className="bg-indigo-100 p-2 rounded-full shrink-0">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
             </div>
-            <span className="font-medium">Announce something to your class</span>
+            <span className="font-medium text-sm sm:text-base">Announce something to your class</span>
           </div>
-          <CreateAnnouncementModal classId={classId} />
+          <div className="w-full sm:w-auto self-end sm:self-auto">
+            <CreateAnnouncementModal classId={classId} />
+          </div>
         </div>
       ) : (
         <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 text-gray-500 text-sm text-center">

@@ -82,18 +82,18 @@ export default function VideoRoom({
       }`}
     >
       {/* Header Bar */}
-      <div className="flex items-center justify-between px-6 py-3 bg-gray-900/80 backdrop-blur-xl border-b border-gray-800 shrink-0 z-20">
+      <div className="flex items-center justify-between px-3 sm:px-6 py-3 bg-gray-900/80 backdrop-blur-xl border-b border-gray-800 shrink-0 z-20 overflow-x-auto custom-scrollbar">
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
           <span className="text-white font-semibold text-sm tracking-wide">
             LIVE CLASS
           </span>
-          <span className="text-gray-400 text-xs bg-gray-800 px-2 py-0.5 rounded-full">
+          <span className="hidden sm:inline text-gray-400 text-xs bg-gray-800 px-2 py-0.5 rounded-full">
             Room: {roomName.slice(0, 8)}...
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-gray-400 text-sm flex items-center gap-1.5">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <span className="hidden md:flex text-gray-400 text-sm items-center gap-1.5">
             <Users className="w-3.5 h-3.5" />
             {isHost ? "Host" : "Student"}
           </span>
@@ -123,7 +123,7 @@ export default function VideoRoom({
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-all font-semibold text-sm shadow-lg shadow-red-900/30"
           >
             <PhoneOff className="w-4 h-4" />
-            {isHost ? "End Class" : "Leave"}
+            <span className="hidden sm:inline">{isHost ? "End Class" : "Leave"}</span>
           </button>
         </div>
       </div>

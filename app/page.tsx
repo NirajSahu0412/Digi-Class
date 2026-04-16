@@ -26,12 +26,12 @@ export default async function Home() {
             </span>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             {session ? (
               <>
                 <Link
                   href="/dashboard"
-                  className="px-6 py-2.5 rounded-full bg-white/10 text-white text-sm font-medium hover:bg-white/20 transition-all border border-white/5 hover:border-white/20"
+                  className="px-4 py-2 sm:px-6 sm:py-2.5 rounded-full bg-white/10 text-white text-xs sm:text-sm font-medium hover:bg-white/20 transition-all border border-white/5 hover:border-white/20"
                 >
                   Dashboard
                 </Link>
@@ -43,13 +43,13 @@ export default async function Home() {
               <>
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                  className="text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="group relative px-6 py-2.5 text-sm font-semibold text-white overflow-hidden rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+                  className="group relative px-4 py-2 sm:px-6 sm:py-2.5 text-xs sm:text-sm font-semibold text-white overflow-hidden rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     Get Started
