@@ -2,8 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { Settings, Trash2 } from "lucide-react";
+import { Settings, Trash2, BookOpen } from "lucide-react";
 import { ClassroomSettingsForm } from "@/components/classroom/ClassroomSettingsForm";
+import { SubjectManager } from "@/components/classroom/SubjectManager";
 
 export default async function ClassroomSettingsPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = await params;
@@ -31,6 +32,16 @@ export default async function ClassroomSettingsPage({ params }: { params: Promis
 
   const { classroom } = member;
 
+  const subjects = await prisma.subject.findMany({
+    where: { classroomId: classId },
+    orderBy: { name: "asc" },
+    include: {
+      _count: {
+        select: { assignments: true, notes: true }
+      }
+    }
+  });
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
@@ -47,6 +58,20 @@ export default async function ClassroomSettingsPage({ params }: { params: Promis
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">General Details</h3>
           <ClassroomSettingsForm classroom={classroom} />
+        </div>
+      </div>
+
+      {/* Subject Management */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-indigo-600" />
+            Subjects
+          </h3>
+          <p className="text-gray-500 text-sm mb-4 border-b pb-3">
+            Add, rename, or remove subjects for this classroom.
+          </p>
+          <SubjectManager classroomId={classId} subjects={subjects} />
         </div>
       </div>
 

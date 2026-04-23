@@ -42,6 +42,7 @@ model Classroom {
   subjects      Subject[]
   assignments   Assignment[]
   notes         Notes[]
+  noteFolders   NoteFolder[]
   announcements Announcement[]
   videoSessions VideoSession[]
   storageUsages StorageUsage[]
@@ -81,7 +82,9 @@ model Assignment {
   id          String   @id @default(uuid())
   title       String
   description String?
+  totalMarks  Float?
   deadline    DateTime?
+  createdAt   DateTime @default(now())
 
   classroomId String
   classroom   Classroom @relation(fields: [classroomId], references: [id])
@@ -104,6 +107,7 @@ enum SubmissionStatus {
 model Submission {
   id           String           @id @default(uuid())
   fileUrl      String?
+  fileName     String?
   marks        Float?
   feedback     String?
   status       SubmissionStatus @default(PENDING)
@@ -118,14 +122,36 @@ model Submission {
 
 model Notes {
   id          String   @id @default(uuid())
+  title       String
   fileUrl     String
-  uploadedBy  String // Could be relation, leaving as String per prompt
+  fileName    String
+  fileType    String
+  fileSize    Int
+  publicId    String?
+  uploadedBy  String
+  createdAt   DateTime @default(now())
 
   classroomId String
   classroom   Classroom @relation(fields: [classroomId], references: [id])
 
   subjectId   String?
   subject     Subject?  @relation(fields: [subjectId], references: [id])
+
+  folderId    String?
+  folder      NoteFolder? @relation(fields: [folderId], references: [id])
+}
+
+model NoteFolder {
+  id          String   @id @default(uuid())
+  name        String
+  createdAt   DateTime @default(now())
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  notes       Notes[]
+
+  @@unique([name, classroomId])
 }
 
 model VideoSession {
