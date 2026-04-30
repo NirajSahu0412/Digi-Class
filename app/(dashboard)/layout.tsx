@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import LogoutButton from "@/components/LogoutButton";
 import { MobileNav } from "@/components/MobileNav";
+import { APP_CONFIG } from "../app.config";
+import Logo from "@/components/Logo";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -19,15 +21,11 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       <header className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/dashboard" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900 tracking-tight">
-                EduConnect
-              </span>
-            </Link>
-            
+            <Logo 
+              href="/dashboard"
+              textClassName="text-gray-900 hidden sm:block"
+            />
+
             <div className="flex items-center gap-6">
               <nav className="hidden md:flex items-center gap-6">
                 <Link
@@ -63,16 +61,16 @@ export default async function DashboardLayout({ children }: { children: ReactNod
               </div>
 
               {/* Mobile Hamburger Menu */}
-              <MobileNav 
-                userName={session.user.name || "User"} 
-                userEmail={session.user.email || ""} 
-                userImage={session.user.image} 
+              <MobileNav
+                userName={session.user.name || "User"}
+                userEmail={session.user.email || ""}
+                userImage={session.user.image}
               />
             </div>
           </div>
         </div>
       </header>
-      
+
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>

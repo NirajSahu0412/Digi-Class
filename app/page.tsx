@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { APP_CONFIG } from '@/app/app.config';
 import { ArrowRight, Video, BookOpen, Users, Shield, Zap, Sparkles } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -18,12 +20,9 @@ export default async function Home() {
       <nav className="relative z-50 border-b border-white/5 bg-black/20 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-gray-400">
-              EduConnect
-            </span>
+            <Logo 
+              textClassName="bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-gray-400 hidden sm:block"
+            />
           </div>
 
           <div className="flex items-center gap-4 sm:gap-6">

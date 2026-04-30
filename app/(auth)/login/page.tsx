@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Sparkles, ArrowRight, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { APP_CONFIG } from "@/app/app.config";
+import Logo from "@/components/Logo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -90,14 +92,10 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-[420px] relative z-10">
-        <Link href="/" className="flex items-center justify-center gap-2 mb-8 group w-max mx-auto">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-2xl font-bold text-white tracking-tight">
-            EduConnect
-          </span>
-        </Link>
+        <Logo 
+          className="mb-8 w-max mx-auto" 
+          textClassName="text-white !text-2xl" 
+        />
 
         <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
           {/* Subtle inner gradient */}
