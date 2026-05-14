@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Settings, Trash2, BookOpen } from "lucide-react";
 import { ClassroomSettingsForm } from "@/components/classroom/ClassroomSettingsForm";
 import { SubjectManager } from "@/components/classroom/SubjectManager";
+import { DeleteClassroomButton } from "@/components/classroom/DeleteClassroomButton";
 
 export default async function ClassroomSettingsPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = await params;
@@ -80,10 +81,7 @@ export default async function ClassroomSettingsPage({ params }: { params: Promis
         <p className="text-sm text-red-600">
           Deleting a classroom will permanently remove all assignments, submissions, notes, and members. This action cannot be undone.
         </p>
-        <button className="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition flex items-center gap-2">
-          <Trash2 className="w-4 h-4" />
-          Delete Classroom
-        </button>
+        <DeleteClassroomButton classId={classId} />
       </div>
     </div>
   );

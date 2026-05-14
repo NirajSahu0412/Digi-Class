@@ -270,3 +270,80 @@ export async function deleteNote(classroomId: string, noteId: string) {
   revalidatePath(`/classroom/${classroomId}/notes`);
   return { success: true };
 }
+
+export async function deleteClassroom(classroomId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return { error: "Unauthorized" };
+
+  const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
+  if (!dbUser) return { error: "User not found" };
+
+  const member = await prisma.classroomMember.findUnique({
+    where: { userId_classroomId: { userId: dbUser.id, classroomId } }
+  });
+
+  if (member?.role !== "TEACHER") return { error: "Unauthorized" };
+
+  // Delete from Cloudinary using API
+  try {
+    const cloudinary = (await import("@/lib/cloudinary")).default;
+    // Delete all notes in this classroom
+    await cloudinary.api.delete_resources_by_prefix(`digi-class/notes/${classroomId}/`);
+    // Delete all submissions in this classroom
+    await cloudinary.api.delete_resources_by_prefix(`digi-class/submissions/${classroomId}/`);
+
+    // We can also try deleting the folders to keep Cloudinary clean
+    await cloudinary.api.delete_folder(`digi-class/notes/${classroomId}`).catch(() => { });
+
+    // For submissions, we have nested folders per assignment, so we'd have to delete those first.
+    // Cloudinary admin API doesn't easily delete non-empty folders recursively without multiple calls,
+    // so deleting resources by prefix is the main goal to free up space.
+  } catch (e) {
+    console.error("Cloudinary bulk delete error:", e);
+    // Continue with DB deletion even if Cloudinary fails
+  }
+
+  // Delete DB records in order to respect foreign keys
+
+  // 1. Attendance (has classroomId as string)
+  await prisma.attendance.deleteMany({ where: { classroomId } });
+
+  // 2. Submissions (depends on Assignments)
+  const assignments = await prisma.assignment.findMany({ where: { classroomId }, select: { id: true } });
+  const assignmentIds = assignments.map(a => a.id);
+  if (assignmentIds.length > 0) {
+    await prisma.submission.deleteMany({ where: { assignmentId: { in: assignmentIds } } });
+  }
+
+  // 3. Assignments
+  await prisma.assignment.deleteMany({ where: { classroomId } });
+
+  // 4. Notes & NoteFolders
+  await prisma.notes.deleteMany({ where: { classroomId } });
+  await prisma.noteFolder.deleteMany({ where: { classroomId } });
+
+  // 5. Subjects
+  await prisma.subject.deleteMany({ where: { classroomId } });
+
+  // 6. VideoSessions
+  await prisma.videoSession.deleteMany({ where: { classroomId } });
+
+  // 7. StorageUsages
+  await prisma.storageUsage.deleteMany({ where: { classroomId } });
+
+  // 8. ClassroomMembers
+  await prisma.classroomMember.deleteMany({ where: { classroomId } });
+
+  // 9. Announcements (has cascade but explicit is safe)
+  try {
+    await (prisma as any).announcement.deleteMany({ where: { classroomId } });
+  } catch (e) {
+    // Ignore if announcement model doesn't exist yet
+  }
+
+  // 10. The Classroom itself
+  await prisma.classroom.delete({ where: { id: classroomId } });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
